@@ -1,28 +1,34 @@
 <template>
-    <section class="item-list" v-show="showList">
+    <section class="item-list">
         <div class="list-div" v-for="item in items">
-            <img v-bind:src="item.img">
-            <p>{{item.name}}</p>
+            <router-link to="/hello">
+                <img class="item-img" v-bind:src="item.img">
+                <p>{{item.title}} {{item.description}}</p>
+            </router-link>
         </div>
     </section>
 </template>
 <script>
 export default {
-    props: ['showList', 'items']
+    props: ['items']
 };
 </script>
 
 <style scoped>
-img {
+.item-img {
     width: 100%;
-    height: 200px;
+    height: 500px;
 }
 p {
-    margin: 0px 0px 10px 0px;
+    margin: 15px 0px 30px 0px;
     text-align: left;
 }
+a {
+    text-decoration: none;
+    color: #2c3e50;
+}
 .list-div {
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     border-bottom: 1px solid #ddd;
 }
 </style>

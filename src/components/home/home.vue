@@ -1,19 +1,19 @@
 <template>
     <section class="home_section">
-        <img class="banner" src="../../assets/banner.jpg">
+        <carousel></carousel>
         <ul class="nav-tabs" v-on:click='clickTabs'>
             <li class="active">Data1</li>
             <li>Data2</li>
         </ul>
 
-        <list :show-list="show1" :items="data1"/>
-        <list :show-list="show2" :items="data2"/>
+        <list v-show="show1" :items="data1"/>
+        <list v-show="!show1" :items="data2"/>
     </section>
 </template>
 
 <script>
 var img = require('@/assets/banner.jpg');
-import $ from 'jquery'
+import config from '../../const.js'
 
 export default{
     name: 'home_section',
@@ -21,30 +21,36 @@ export default{
         return {
             show1: true,
             show2: false,
-            data1: [{img: img, name: 'jjjjjjjjjjjjjjj'}],
-            data2: [{img: img, name: 'aaaaaaaaaaaaaaa'}]
+            data1: [],
+            data2: [{img: img, title: 'aaaaaaaaaaaaaaa'}]
         }
     },
     methods: {
         clickTabs (event) {
             document.getElementsByClassName('active')[0].className = '';
             event.target.classList = ['active'];
+            if (event.target.innerText === 'Data1') {
+                this.show1 = true;
+                this.show2 = false;
+            } else {
+                this.show1 = false;
+            }
         }
     },
     components: {
-        'list': require('../../basic/list.vue')
+        'list': require('../../basic/list.vue'),
+        'carousel': require('../../basic/carousel.vue')
     },
     created () {
-        var _self = this;
         $.ajax({
             type: 'get',
-            url: '/',
+            url: config.url + '/v1.0/index?pagesize=10&offset=0',
             dataType: 'json',
-            success: function () {
+            success: data => { // => 可保证this指向vue实例
+                this.data1 = data.data.lessonList;
             },
-            error: function () {
-                _self.data1 = [{img: img, name: 'jjjjjjjjjjjjjjj'},
-                {img: img, name: 'jjjjjjjjjjjjjjj'}, {img: img, name: 'jjjjjjjjjjjjjjj'}];
+            error: data => {
+                this.data1 = [{img: img, title: '服务器获取失败'}];
             }
         })
     }
@@ -52,9 +58,6 @@ export default{
 </script>
 
 <style scoped>
-.banner {
-  width: 100%;
-}
 .nav-tabs {
   width: 100%;
   padding-left: 0px;
